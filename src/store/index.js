@@ -1,3 +1,5 @@
+import {randomGifs, searchGifs, favorite} from './modules';
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -11,5 +13,8 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    randomGifs,
+    searchGifs,
+    favorite
   }
 })

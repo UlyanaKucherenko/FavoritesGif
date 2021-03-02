@@ -1,48 +1,94 @@
 <template>
   <div class="home">
     <div class="home__container container">
+     
       <ul class="home__list">
-        <li class="home__list-item">
+        <li class="home__list-item" v-for="item of gifs" :key="item.id">
           <div class="home__item-wrap-image">
-            <img src="https://picsum.photos/id/237/312/368" alt="1" class="home__item-image" />
+            <img :src="item.images.fixed_height.url" alt="1" class="home__item-image" />
           </div>
-          <div class="home__item-favorite-btn">
+          <div class="home__item-favorite-btn" @click="selectFavorite(item.id)">
             <icon-favorite />
           </div>
         </li>
-        <li class="home__list-item">
-          <div class="home__item-wrap-image">
-            <img src="https://picsum.photos/id/238/312/368" alt="2" class="home__item-image" />
-          </div>
-        </li>
-         <li class="home__list-item">
-          <div class="home__item-wrap-image">
-            <img src="https://picsum.photos/id/239/312/368" alt="3" class="home__item-image" />
-          </div>
-        </li>
-        <li class="home__list-item">
-          <div class="home__item-wrap-image">
-            <img src="https://picsum.photos/id/240/312/368" alt="4" class="home__item-image" />
-          </div>
-        </li>
-        <li class="home__list-item">
-          <div class="home__item-wrap-image">
-            <img src="https://picsum.photos/id/241/312/368" alt="4" class="home__item-image" />
-          </div>
-        </li>
       </ul>
-
     </div>
   </div>
 </template>
 
 <script>
 import IconFavorite from "../components/icon/IconFavorite.vue"
+import { getRandomGifs } from "../utils.js"
+import {mapState, mapActions} from 'vuex'
 export default {
   name: 'Home',
   components: {
     IconFavorite
-  }
+  },
+  data(){
+    return{
+      gifs:[],
+      favoriteGifs: [],
+    }
+  },
+  computed: {
+		...mapState("randomGifs", ["randomGifs"]),
+    ...mapState("searchGifs", ["searchGifs"]),
+    ...mapState("favorite", ["favorite"]),
+	},
+  methods: {
+    ...mapActions('randomGifs', ['addItemToRandomGifs']),
+    ...mapActions('favorite', ['changeFavoriteState']),
+
+     selectFavorite(id) {
+
+            if (this.favoriteGifs.includes(id)) {
+                this.favoriteGifs = this.favoriteGifs.filter(item => item !== id)
+                console.log('this.favoriteGifs delete', this.favoriteGifs);
+                this.changeFavoriteState(this.favoriteGifs);
+               
+              
+            } else {
+                this.favoriteGifs.push(id);
+                this.changeFavoriteState(this.favoriteGifs);
+                console.log('this.favoriteGifs add', this.favoriteGifs);                
+            }
+            
+            localStorage.setItem("favoriteGifs", JSON.stringify(this.favoriteGifs)) ; 
+        },
+
+    /* async getGif(){
+        try {
+          const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
+          const q = "cats"
+          const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q="${q}"`);
+          const parsedRes = await res.json();
+          console.log('parsedRes:',parsedRes);
+         // this.gifs=parsedRes.data;
+         // console.log('gifs:',this.gifs);
+          return parsedRes;
+          }
+        catch (error) {
+        console.log(error);
+        }
+    }*/
+  },
+   mounted(){
+  },
+  async created() {
+    if (this.randomGifs.length === 0) {
+			const dataGif = await getRandomGifs();
+      const data = dataGif.data;
+			data.forEach(item =>{
+				this.addItemToRandomGifs(item);
+			});
+      this.gifs = this.randomGifs;
+		} 
+    else {
+      this.gifs = this.randomGifs;
+      }
+    },
+ 
 }
 </script>
 

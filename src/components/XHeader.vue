@@ -7,7 +7,7 @@
       </nav>
       <div  class="x-header__search-wrap">
         <icon-search  class="x-header__search-icon" />
-        <input type="search" class="x-header__search-input" v-model="textSearch" placeholder="Search  GIF" />
+        <input type="search" class="x-header__search-input" v-model="textSearch" placeholder="Search  GIF" @keyup.enter="search"/>
       </div>
     </div>
    
@@ -16,10 +16,78 @@
 
 <script>
 import IconSearch from "./icon/IconSearch.vue"
+import {mapState, mapActions} from 'vuex'
+import { favouriteArray } from "../utils"
 export default {
   name: 'XHeader',
   components: {
     IconSearch
+  },
+  data(){
+    return{
+      textSearch:"",
+      gifsItems:[],
+      favoriteListOnPage: [],
+    }
+  },
+  computed: {
+		...mapState("searchGifs", ["searchGifs"]),
+    ...mapState("randomGifs", ["randomGifs"]),
+    ...mapState("favorite", ["favorite"]),
+	},
+  methods:{
+
+
+    search() {
+
+      if(this.textSearch.length === 0) {
+        console.log('Input can not be empty');
+      } 
+      else {
+        this.getSearchGif(this.textSearch); 
+         console.log("Search Run!");
+         console.log("textSearch:",this.textSearch);
+      }
+      this.textSearch="";
+    },
+
+    ...mapActions('searchGifs', ['addItemToSearchGifs']),
+    ...mapActions('favorite', ['changeFavoriteState']),
+
+     async getSearchGif(text){
+        try {
+          const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
+          const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q="${text}"`);
+          const parsedRes = await res.json();
+          return parsedRes;
+          } catch (error) {
+              console.log(error);
+            }
+     }
+  },
+
+  async created() {
+
+    const data = favouriteArray;
+      if (data) {
+            this.changeFavoriteState(data);
+        } else {
+            this.changeFavoriteState([]);
+        }
+  
+
+  /*  if (this.searchGifs.length === 0) {
+			const dataGif = await this.getSearchGif();
+      const data = dataGif.data;
+			data.forEach(item =>{
+				this.addItemToSearchGifs(item);
+			});
+      this.gifsItems = this.searchGifs;
+		} 
+    else {
+      this.gifsItems = this.searchGifs;
+      }
+    }*/
   }
 }
 </script>

@@ -36,10 +36,25 @@
 </template>
 <script>
 import IconDelete from "../components/icon/IconDelete.vue"
+import {mapState} from 'vuex'
 export default {
   name:'Favorite',
   components: {
     IconDelete
+  },
+  data(){
+    return{
+      favoriteGifArray:[],
+    }
+  },
+  methods: {
+
+  },
+  computed:{
+    ...mapState("favorite", ["favorite"]),
+  },
+  async created(){
+    //console.log("favorite:",this.favorite);
   }
 }
 </script>
