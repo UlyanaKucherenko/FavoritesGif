@@ -1,0 +1,29 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    font-size:100%;
+    min-height: 100vh;
+    font-family: $base-font;
+}
+
+.container {
+    padding: 0px 10px;   
+    width: 100%;
+    max-width: 1340px;
+    margin: 0 auto;
+
+
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none  
+}
