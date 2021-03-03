@@ -7,7 +7,7 @@
           <div class="home__item-wrap-image">
             <img :src="item.images.fixed_height.url" alt="1" class="home__item-image" />
           </div>
-          <div class="home__item-favorite-btn" @click="selectFavorite(item.id)">
+          <div class="home__item-favorite-btn" :class="isInFavoriteList(item.id) ? 'favorite' : ''" @click="selectFavorite(item.id)">
             <icon-favorite />
           </div>
         </li>
@@ -19,7 +19,7 @@
 <script>
 import IconFavorite from "../components/icon/IconFavorite.vue"
 import { getRandomGifs } from "../utils.js"
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions, mapMutations} from 'vuex'
 export default {
   name: 'Home',
   components: {
@@ -38,7 +38,8 @@ export default {
 	},
   methods: {
     ...mapActions('randomGifs', ['addItemToRandomGifs']),
-    ...mapActions('favorite', ['changeFavoriteState']),
+    ...mapMutations('favorite', ['changeFavoriteState']),
+    
 
      selectFavorite(id) {
 
@@ -55,6 +56,16 @@ export default {
             }
             
             localStorage.setItem("favoriteGifs", JSON.stringify(this.favoriteGifs)) ; 
+        },
+
+         isInFavoriteList(id) {
+            let isInFavorite = false;
+            if (this.favoriteGifs.includes(id)) {
+                isInFavorite = true;
+            } else {
+                isInFavorite = false;
+            }
+            return isInFavorite;
         },
 
     /* async getGif(){
@@ -134,5 +145,8 @@ export default {
         transition: all 0.5s ease-out;
       }
   }
+   .favorite{
+       background-color:rgb(146, 146, 3);
+    }
 }
 </style>

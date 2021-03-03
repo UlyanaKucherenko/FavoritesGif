@@ -14,7 +14,4 @@ const getRandomGifs = async() =>{
 
 const favouriteArray = JSON.parse(localStorage.getItem("favoriteGifs"));
 
-export {
-    getRandomGifs,
-    favouriteArray
-}
+export {getRandomGifs,favouriteArray};

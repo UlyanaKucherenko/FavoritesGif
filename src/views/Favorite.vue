@@ -2,32 +2,12 @@
   <div class="favorite">
     <div class="favorite__container container">
          <ul class="favorite__list">
-        <li class="favorite__list-item">
+        <li class="favorite__list-item" v-for="item of favoriteGifArray" :key="item.id">
           <div class="favorite__item-wrap-image">
-            <img src="https://picsum.photos/id/240/312/368" alt="1" class="favorite__item-image" />
+            <img :src="item.images.fixed_height.url" alt="1" class="favorite__item-image" />
           </div>
-           <div class="favorite__item-delete-btn">
+           <div class="favorite__item-delete-btn" @click="deleteItem(item.id)">
             <icon-delete class="favorite__delete-btn" />
-          </div>
-        </li>
-        <li class="favorite__list-item">
-          <div class="favorite__item-wrap-image">
-            <img src="https://picsum.photos/id/241/312/368" alt="2" class="favorite__item-image" />
-          </div>
-        </li>
-         <li class="favorite__list-item">
-          <div class="favorite__item-wrap-image">
-            <img src="https://picsum.photos/id/242/312/368" alt="3" class="favorite__item-image" />
-          </div>
-        </li>
-        <li class="favorite__list-item">
-          <div class="favorite__item-wrap-image">
-            <img src="https://picsum.photos/id/243/312/368" alt="4" class="favorite__item-image" />
-          </div>
-        </li>
-        <li class="favorite__list-item">
-          <div class="favorite__item-wrap-image">
-            <img src="https://picsum.photos/id/244/312/368" alt="4" class="favorite__item-image" />
           </div>
         </li>
       </ul>
@@ -36,7 +16,8 @@
 </template>
 <script>
 import IconDelete from "../components/icon/IconDelete.vue"
-import {mapState} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
+
 export default {
   name:'Favorite',
   components: {
@@ -45,16 +26,42 @@ export default {
   data(){
     return{
       favoriteGifArray:[],
+      itemId:[],
     }
   },
   methods: {
+    ...mapMutations("favorite", ["changeFavoriteState"]),
 
+      getDataById() {
+        const dataForFavorite = this.randomGifs.filter(item => this.favorite.includes(item.id))
+        this.favoriteGifArray = dataForFavorite;
+        },
+        
+
+      deleteItem(id){
+        this.favoriteGifArray = this.favoriteGifArray.filter(item => item.id !== id);
+        console.log(this.favoriteGifArray);
+        this.itemId = this.favoriteGifArray.map((item)=>{
+          if(item.id) {
+            return item.id;
+          }
+        });
+         console.log("itemId",this.itemId);
+        this.changeFavoriteState(this.itemId);
+        console.log("state",this.favorite);
+
+        localStorage.setItem("favoriteGifs", JSON.stringify(this.favorite)) ; 
+      },
   },
   computed:{
     ...mapState("favorite", ["favorite"]),
+    ...mapState("randomGifs", ["randomGifs"]),
   },
+ 
   async created(){
-    //console.log("favorite:",this.favorite);
+    console.log("favorite:",this.favorite);
+    this.getDataById();
+
   }
 }
 </script>

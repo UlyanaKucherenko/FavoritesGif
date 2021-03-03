@@ -16,7 +16,7 @@
 
 <script>
 import IconSearch from "./icon/IconSearch.vue"
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions, mapMutations} from 'vuex'
 import { favouriteArray } from "../utils"
 export default {
   name: 'XHeader',
@@ -52,7 +52,7 @@ export default {
     },
 
     ...mapActions('searchGifs', ['addItemToSearchGifs']),
-    ...mapActions('favorite', ['changeFavoriteState']),
+    ...mapMutations('favorite', ['changeFavoriteState']),
 
      async getSearchGif(text){
         try {
@@ -74,7 +74,7 @@ export default {
         } else {
             this.changeFavoriteState([]);
         }
-  
+  }
 
   /*  if (this.searchGifs.length === 0) {
 			const dataGif = await this.getSearchGif();
@@ -88,7 +88,7 @@ export default {
       this.gifsItems = this.searchGifs;
       }
     }*/
-  }
+  
 }
 </script>
 
