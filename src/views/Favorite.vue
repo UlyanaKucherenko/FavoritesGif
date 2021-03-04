@@ -1,5 +1,6 @@
 <template>
   <div class="favorite">
+    <x-header />
     <div class="favorite__container container">
          <ul class="favorite__list">
         <li class="favorite__list-item" v-for="item of favoriteGifArray" :key="item.id">
@@ -7,7 +8,7 @@
             <img :src="item.images.fixed_height.url" alt="1" class="favorite__item-image" />
           </div>
            <div class="favorite__item-delete-btn" @click="deleteItem(item.id)">
-            <icon-delete class="favorite__delete-btn" />
+            <x-icon icon=delete class="favorite__delete-btn" />
           </div>
         </li>
       </ul>
@@ -15,13 +16,15 @@
   </div>
 </template>
 <script>
-import IconDelete from "../components/icon/IconDelete.vue"
+
 import {mapState, mapMutations} from 'vuex'
+import {  favouriteArray} from "../utils.js"
+import XHeader from "../components/XHeader.vue"
 
 export default {
   name:'Favorite',
   components: {
-    IconDelete
+  XHeader
   },
   data(){
     return{
@@ -29,14 +32,20 @@ export default {
       itemId:[],
     }
   },
+  computed:{
+    ...mapState("favorite", ["favorite"]),
+    ...mapState("gifs", ["gifs"]),
+    ...mapState("randomGifs", ["randomGifs"]),
+    
+  },
   methods: {
     ...mapMutations("favorite", ["changeFavoriteState"]),
 
       getDataById() {
-        const dataForFavorite = this.randomGifs.filter(item => this.favorite.includes(item.id))
+         let dataForFavorite = [];
+        dataForFavorite = this.randomGifs.filter(item => this.favorite.includes(item.id));
         this.favoriteGifArray = dataForFavorite;
         },
-
 
       deleteItem(id){
         this.favoriteGifArray = this.favoriteGifArray.filter(item => item.id !== id);
@@ -50,28 +59,17 @@ export default {
         localStorage.setItem("favoriteGifs", JSON.stringify(this.favorite)) ; 
       },
   },
-  computed:{
-    ...mapState("favorite", ["favorite"]),
-    ...mapState("randomGifs", ["randomGifs"]),
-    
-  },
-
-  /*mounted(){
-       const data = this.favourite;
-      if (data) {
-            this.changeFavoriteState(data);
-             console.log("data", data);
-        } else {
-            this.changeFavoriteState([]);
-            console.log("NOT FAVORITES");
-        }
-        
-  },*/
  
    async created(){
     console.log("favorite:",this.favorite);
-    this.getDataById();
 
+    const data = favouriteArray;
+      if (data) {
+            this.changeFavoriteState(data);
+        } else {
+            this.changeFavoriteState([]);
+        }
+    this.getDataById();
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import randomGifs from './randomGifs.js'
-import searchGifs from './searchGifs.js'
 import favorite from './favorite.js';
+import gifs from './gifs.js';
 
-export {randomGifs,searchGifs,favorite};
+export {randomGifs,favorite, gifs};

@@ -1,72 +1,90 @@
 <template>
   <div class="home">
-    <div class="home__container container">
-     
-      <ul class="home__list">
-        <li class="home__list-item" v-for="item of gifs" :key="item.id">
-          <div class="home__item-wrap-image">
-            <img :src="item.images.fixed_height.url" alt="1" class="home__item-image" />
-          </div>
-          <div class="home__item-favorite-btn" :class="isInFavoriteList(item.id) ? 'favorite' : ''" @click="selectFavorite(item.id)">
-            <icon-favorite />
-          </div>
-        </li>
-      </ul>
+    <div class="home__header">
+        <div class="home__header-container container">
+            <nav class="home__nav">
+                <router-link to="/" exact active-class="_active" class="home__nav-item"> Home </router-link>
+                <router-link to="/favorite" exact active-class="_active" class="home__nav-item"> Favorites </router-link>
+            </nav>
+            <div  class="home__search-wrap">
+                <x-icon icon=search  class="home__search-icon" />
+                <input type="search" class="home__search-input" v-model="query" placeholder="Search  GIF" @keyup.enter="handleSubmit()"/>
+            </div>
+        </div>   
     </div>
-  </div>
-</template>
+    <div class="home__main">
+        <div class="container">
+            <ul class="home__list">
+                <li class="home__list-item" v-for="item of gifsArray" :key="item.id">
+                    <div class="home__item-wrap-image">
+                        <img :src="item.images.fixed_height.url" alt="1" class="home__item-image" />
+                    </div>
+                    <div class="home__item-favorite-btn" :class="isInFavoriteList(item.id) ? 'favorite' : ''" @click="selectFavorite(item.id)">
+                        <x-icon icon=favorite /> 
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
+</template>
 <script>
-import IconFavorite from "../components/icon/IconFavorite.vue"
-import { getRandomGifs } from "../utils.js"
-import {mapState, mapActions, mapMutations} from 'vuex'
+import { mapActions, mapState, mapMutations } from "vuex";
+import { getRandomGifs} from "../utils.js"
+
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    IconFavorite
-  },
-  props:{
-    filterGifs:{
-      type:String,
-      default:"dog"
-    }
     
-    },
-  data(){
-    return{
-      gifs:[],
-      favoriteGifs: [],
-    }
+  },
+  
+  data() {
+    return {
+      query: "",
+      offset:20,
+      limit:20,
+      favoriteGifs:[],
+      gifsArray:[],
+    };
   },
   computed: {
-		...mapState("randomGifs", ["randomGifs"]),
-    ...mapState("searchGifs", ["searchGifs"]),
-    ...mapState("favorite", ["favorite"]),
-	},
-
+    ...mapState("gifs", ["gifs"]),
+    ...mapState("randomGifs", ["randomGifs"]),
+  },
   methods: {
-    ...mapActions('randomGifs', ['addItemToRandomGifs']),
-    ...mapActions('searchGifs', ['addItemToSearchGifs']),
+    ...mapActions("gifs", ["getGifsByQuery"]),
     ...mapMutations('favorite', ['changeFavoriteState']),
-  
-     selectFavorite(id) {
+    ...mapActions('randomGifs', ['addItemToRandomGifs']),
+    
+   async handleSubmit() {
+       if(!this.query === "") {
+           console.log("no! words!");
+       }
+       else{
+           await this.getGifsByQuery({query:this.query,limit:this.limit, offset:this.offset});
+           this.gifsArray = this.gifs;
+       }
+    },
 
-            if (this.favoriteGifs.includes(id)) {
-                this.favoriteGifs = this.favoriteGifs.filter(item => item !== id)
-                console.log('this.favoriteGifs delete', this.favoriteGifs);
-                this.changeFavoriteState(this.favoriteGifs);
+    selectFavorite(id) {
+
+    if (this.favoriteGifs.includes(id)) {
+        this.favoriteGifs = this.favoriteGifs.filter(item => item !== id)
+        console.log('this.favoriteGifs delete', this.favoriteGifs);
+        this.changeFavoriteState(this.favoriteGifs);
                
               
-            } else {
-                this.favoriteGifs.push(id);
-                this.changeFavoriteState(this.favoriteGifs);
-                console.log('this.favoriteGifs add', this.favoriteGifs);                
-            }
+    } else {
+        this.favoriteGifs.push(id);
+        this.changeFavoriteState(this.favoriteGifs);
+        console.log('this.favoriteGifs add', this.favoriteGifs);                
+    }
             
-            localStorage.setItem("favoriteGifs", JSON.stringify(this.favoriteGifs)) ; 
-        },
+    localStorage.setItem("favoriteGifs", JSON.stringify(this.favoriteGifs)) ; 
+    },
 
-         isInFavoriteList(id) {
+    isInFavoriteList(id) {
             let isInFavorite = false;
             if (this.favoriteGifs.includes(id)) {
                 isInFavorite = true;
@@ -74,61 +92,108 @@ export default {
                 isInFavorite = false;
             }
             return isInFavorite;
-        },
-
- /*   async getGif(){
-        try {
-          const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
-          const q = this.$store.state.value;
-          const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q="${q}"`);
-          const parsedRes = await res.json();
-          console.log('parsedRes:',parsedRes);
-         // this.gifs=parsedRes.data;
-         // console.log('gifs:',this.gifs);
-          return parsedRes;
-          }
-        catch (error) {
-        console.log(error);
-        }
-    },*/
+    },
   },
-  async created() {
-    if(this.searchGifs) {
-       this.gifs = this.searchGifs;
-    }
 
-     console.log(this.searchGifs);
+async created() {
+  
 
-    if (this.searchGifs.length === 0) {
+    if (this.randomGifs.length === 0) {
 			const dataGif = await getRandomGifs();
       const data = dataGif.data;
 			data.forEach(item =>{
 				this.addItemToRandomGifs(item);
 			});
-      this.gifs = this.randomGifs;
+      this.gifsArray = this.randomGifs;
 		} 
     else {
-      this.gifs = [];
+      this.gifsArray = this.randomGifs;
       }
-
-     /* const dataGif = await this.getGif();
-      const data = dataGif.data;
-			data.forEach(item =>{
-				this.addItemToSearchGifs(item);
-			});
-      this.gifs = this.searchGifs;*/
-
-    },
  
-}
+    }
+
+};
 </script>
-
-<style lang="scss" scoped>
+<style lang="scss">
 .home {
+  
+    &__header{
+        background-color: #464646;
+        @include flex(center,center,row,wrap);
+        min-height:104px;
+        margin-bottom: 32px;
+        
+        z-index: 5;
+        position: fixed;
+        width: 100%;
+        top:0;
+    }
 
-  &__container {
-    padding-top: 32px;
+    &__header-container {
+        @include flex(space-between,center,row,wrap);
+    }
+
+     &__nav-item {
+      @include text(18px,500, $white);
+      text-transform: uppercase;
+      position: relative;
+      display: inline-block;
+
+    &:hover{
+      color:$white;
+      text-decoration: underline;
+      transition: all 0.5s ease-out;
+    }
+
+    &.router-link-exact-active {
+       text-decoration: underline;
+    }
+
+    &:first-child{
+      margin-right: 53px;
+    }
   }
+
+  &__search-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 872px;
+    background-color: #464646;
+  }
+
+   &__search-icon {
+    position: absolute;
+    left:16px;
+    top:50%;
+    transform: translateY(-50%);
+  }
+
+  &__search-input {
+    max-width: 872px;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 4px;
+    padding: 0 40px;
+    @include flex(center,center,row);
+    min-height: 56px;
+    overflow: hidden;
+    outline: none;
+    border: none;
+    @include text(16px,500, #706d6d);
+
+    &[type="search"]::placeholder { 
+      @include text(16px,400, #C0C0C0);
+    } 
+
+    &:focus::placeholder {
+      color: transparent
+    }
+  }
+
+  &__main {
+      margin-top: 128px;
+  }
+
   &__list {
     width: 100%;
     @include flex(space-between,center,row,wrap);
@@ -168,5 +233,6 @@ export default {
    .favorite{
        background-color:rgb(146, 146, 3);
     }
+  
 }
 </style>

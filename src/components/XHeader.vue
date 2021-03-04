@@ -6,9 +6,8 @@
         <router-link to="/favorite" exact active-class="_active" class="x-header__nav-item"> Favorites </router-link>
       </nav>
       <div  class="x-header__search-wrap">
-        <icon-search  class="x-header__search-icon" />
-        <input type="search" class="x-header__search-input" v-model="textSearch" placeholder="Search  GIF" @keyup.enter="search()"/>
-        <h6>Texy: {{textSearch}}</h6>
+        <x-icon icon=search  class="x-header__search-icon" />
+        <input type="search" class="x-header__search-input" placeholder="Search  GIF"/>
       </div>
     </div>
    
@@ -16,88 +15,11 @@
 </template>
 
 <script>
-import IconSearch from "./icon/IconSearch.vue"
-import {mapState, mapActions, mapMutations} from 'vuex'
-import { favouriteArray } from "../utils"
+
 export default {
   name: 'XHeader',
   components: {
-    IconSearch
   },
-  
-  data(){
-    return{
-      textSearch:"",
-      gifsItems:[],
-    }
-  },
-  computed: {
-		...mapState("searchGifs", ["searchGifs"]),
-    ...mapState("randomGifs", ["randomGifs"]),
-    ...mapState("favorite", ["favorite"]),
-
-    input_value: {
-      get() {
-        return this.$store.state.value;
-      },
-      set(value) {
-        this.$store.dispatch("setValue", value)
-      }
-    }
-	},
-  methods:{
-
-    search() {
-
-      if(this.$store.state.value.length === 0) {
-        console.log('Input can not be empty');
-      } 
-      else {
-         console.log("Search Run!");
-         console.log("Value: ",this.$store.state.value);
-         this.getSearchGif();
-      }
-
-    console.log('search', this.textSearch);
-    
-    this.$emit('search', {text:this.textSearch});
-      
-    },
-
-    ...mapActions('searchGifs', ['addItemToSearchGifs']),
-    ...mapMutations('favorite', ['changeFavoriteState']),
-    ...mapMutations(['setValue']),
-
-     async getSearchGif(){
-        try {
-          const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
-          const q = this.$store.state.value;
-          const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q="${q}"`);
-          const parsedRes = await res.json();
-          console.log('parsedRes:',parsedRes);
-
-          const dataMainGif = parsedRes.data;
-          dataMainGif.forEach(item =>{
-            this.addItemToSearchGifs(item);
-          }); 
-            console.log(this.searchGifs);
-          //return parsedRes;
-          }
-        catch (error) {
-        console.log(error);
-        }
-    },
-
-
-  async created() {
-    const data = favouriteArray;
-      if (data) {
-            this.changeFavoriteState(data);
-        } else {
-            this.changeFavoriteState([]);
-        }
-    }
-  }
 }
 </script>
 
@@ -115,6 +37,7 @@ export default {
       display: inline-block;
 
     &:hover{
+      color:$white;
       text-decoration: underline;
       transition: all 0.5s ease-out;
     }

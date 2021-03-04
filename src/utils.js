@@ -1,10 +1,9 @@
-const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
+import {urls} from "./http"
 
 const getRandomGifs = async() =>{
     try {
-        const res = await fetch(`https://api.giphy.com/v1/gifs/trending?api_key=${apiKey}&limit=20`);
+        const res = await fetch(`${urls.random}`);
         const parsedRes = await res.json();
-        console.log('parsedRes:',parsedRes);
         return parsedRes;
     } 
     catch (error) {

@@ -1,27 +1,22 @@
 <template>
     <div class="main-layout">
         <div class="main-layout__container">
-                <div class="main-layout__nav">
-                   <x-header @search="onSearch" />
-                </div>
                 <div class="main-layout__content">
-                 <!--   <Home :filterGifs="getSearchInput(value)" ></Home>-->
-                    <slot />
+                  
+                  <slot /> 
                 </div>
         </div>
     </div>
 </template>
 <script>
-import XHeader from '../XHeader.vue'
+//import Favorite from '../../views/Favorite.vue';
 //import Home from '../../views/Home.vue'
 export default {
     name: 'MainLayout',
-    props:{
-
-    },
+    props:{},
     components: {
-        XHeader,
-        //Home
+       // Home,
+     //   Favorite
        
     },
     methods: {
