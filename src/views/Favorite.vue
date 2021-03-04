@@ -61,7 +61,6 @@ export default {
   },
  
    async created(){
-    console.log("favorite:",this.favorite);
 
     const data = favouriteArray;
       if (data) {

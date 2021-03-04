@@ -30,7 +30,6 @@ const  actions = {
     getGifsByQuery: async ({commit},{query,limit,offset}) =>{
         commit("gifsRequest");
         const result = await httpSevice.getGifsByQuery(query,limit,offset);
-       console.log(result);
         if(result?.meta.msg === "OK") {
             commit("gifsSuccess");
             commit("gifsUpdate", result.data);

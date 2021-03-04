@@ -1,4 +1,7 @@
-# favorite-gif
+# Test task Favorite gifs
+
+*Vuejs, Vue-router, Vuex*
+https://favorit-gif.netlify.app
 
 ## Project setup
 ```
@@ -19,6 +22,3 @@ yarn build
 ```
 yarn lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
