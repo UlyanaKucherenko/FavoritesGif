@@ -25,6 +25,13 @@ export default {
   components: {
     IconFavorite
   },
+  props:{
+    filterGifs:{
+      type:String,
+      default:"dog"
+    }
+    
+    },
   data(){
     return{
       gifs:[],
@@ -36,11 +43,12 @@ export default {
     ...mapState("searchGifs", ["searchGifs"]),
     ...mapState("favorite", ["favorite"]),
 	},
+
   methods: {
     ...mapActions('randomGifs', ['addItemToRandomGifs']),
+    ...mapActions('searchGifs', ['addItemToSearchGifs']),
     ...mapMutations('favorite', ['changeFavoriteState']),
-    
-
+  
      selectFavorite(id) {
 
             if (this.favoriteGifs.includes(id)) {
@@ -68,10 +76,10 @@ export default {
             return isInFavorite;
         },
 
-    /* async getGif(){
+ /*   async getGif(){
         try {
           const apiKey="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb"
-          const q = "cats"
+          const q = this.$store.state.value;
           const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q="${q}"`);
           const parsedRes = await res.json();
           console.log('parsedRes:',parsedRes);
@@ -82,12 +90,16 @@ export default {
         catch (error) {
         console.log(error);
         }
-    }*/
-  },
-   mounted(){
+    },*/
   },
   async created() {
-    if (this.randomGifs.length === 0) {
+    if(this.searchGifs) {
+       this.gifs = this.searchGifs;
+    }
+
+     console.log(this.searchGifs);
+
+    if (this.searchGifs.length === 0) {
 			const dataGif = await getRandomGifs();
       const data = dataGif.data;
 			data.forEach(item =>{
@@ -96,8 +108,16 @@ export default {
       this.gifs = this.randomGifs;
 		} 
     else {
-      this.gifs = this.randomGifs;
+      this.gifs = [];
       }
+
+     /* const dataGif = await this.getGif();
+      const data = dataGif.data;
+			data.forEach(item =>{
+				this.addItemToSearchGifs(item);
+			});
+      this.gifs = this.searchGifs;*/
+
     },
  
 }

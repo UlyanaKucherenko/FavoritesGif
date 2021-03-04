@@ -36,7 +36,7 @@ export default {
         const dataForFavorite = this.randomGifs.filter(item => this.favorite.includes(item.id))
         this.favoriteGifArray = dataForFavorite;
         },
-        
+
 
       deleteItem(id){
         this.favoriteGifArray = this.favoriteGifArray.filter(item => item.id !== id);
@@ -46,19 +46,29 @@ export default {
             return item.id;
           }
         });
-         console.log("itemId",this.itemId);
         this.changeFavoriteState(this.itemId);
-        console.log("state",this.favorite);
-
         localStorage.setItem("favoriteGifs", JSON.stringify(this.favorite)) ; 
       },
   },
   computed:{
     ...mapState("favorite", ["favorite"]),
     ...mapState("randomGifs", ["randomGifs"]),
+    
   },
+
+  /*mounted(){
+       const data = this.favourite;
+      if (data) {
+            this.changeFavoriteState(data);
+             console.log("data", data);
+        } else {
+            this.changeFavoriteState([]);
+            console.log("NOT FAVORITES");
+        }
+        
+  },*/
  
-  async created(){
+   async created(){
     console.log("favorite:",this.favorite);
     this.getDataById();
 
