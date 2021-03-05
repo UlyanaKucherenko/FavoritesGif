@@ -2,8 +2,7 @@
     <div class="main-layout">
         <div class="main-layout__container">
                 <div class="main-layout__content">
-                  
-                  <slot /> 
+               <slot /> 
                 </div>
         </div>
     </div>
@@ -15,7 +14,7 @@ export default {
     name: 'MainLayout',
     props:{},
     components: {
-       // Home,
+     //   Home,
      //   Favorite
        
     },

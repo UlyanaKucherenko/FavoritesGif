@@ -7,7 +7,7 @@ const api_key="wMqvSK3gHL65KRyFxTxyrNCUCJbskKtb";
 
 const urls = {
     search:(query,limit,count) => `${BASE_URL}?api_key=${api_key}&q="${query}"&limit=${limit}&count=${count}`,
-    random: `${RANDOM_BASE_URL}?api_key=${api_key}&limit="20"`,
+    random: `${RANDOM_BASE_URL}?api_key=${api_key}`,
 }
 
 export {urls}

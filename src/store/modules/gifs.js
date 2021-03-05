@@ -1,5 +1,4 @@
 import { httpSevice } from "../../http";
-import { message } from "ant-design-vue";
 
 const state = () => ({
     gifs: [],
@@ -36,7 +35,7 @@ const  actions = {
         }
         else {
             commit("gifsFailure");
-            message.error(result?.meta.msg);
+            console.log(result?.meta.msg);
         }
     },
 };

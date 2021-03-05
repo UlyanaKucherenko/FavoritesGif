@@ -14,7 +14,8 @@
     </div>
     <div class="home__main">
         <div class="container">
-            <ul class="home__list">
+           <pulse-loader style="text-align:center" :loading="loading"></pulse-loader>
+            <ul class="home__list" v-if="!loading">
                 <li class="home__list-item" v-for="item of gifsArray" :key="item.id">
                     <div class="home__item-wrap-image">
                         <img :src="item.images.fixed_height.url" alt="1" class="home__item-image" />
@@ -32,11 +33,12 @@
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
 import { getRandomGifs} from "../utils.js"
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
   name: "Home",
   components: {
-    
+    PulseLoader
   },
   
   data() {
@@ -49,7 +51,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("gifs", ["gifs"]),
+    ...mapState("gifs", ["gifs","loading"]),
     ...mapState("randomGifs", ["randomGifs"]),
   },
   methods: {
@@ -60,6 +62,7 @@ export default {
    async handleSubmit() {
        if(!this.query === "") {
            console.log("no! words!");
+           
        }
        else{
            await this.getGifsByQuery({query:this.query,limit:this.limit, offset:this.offset});
